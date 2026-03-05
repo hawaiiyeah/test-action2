@@ -1,1 +1,48 @@
+name: Test
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  copilot-requests: write
+jobs:
+  get_available_models:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v6
 
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot
+        
+      - name: Get available model information
+        run: |
+          curl -H "Authorization: $GITHUB_TOKEN" -H "Copilot-Integration-Id: copilot-developer-cli" https://api.githubcopilot.com/models | jq
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  test_models:
+     runs-on: ubuntu-latest
+     continue-on-error: true
+     strategy:
+       fail-fast: false
+       matrix:
+         model: [claude-opus-4.6, gpt-5.3-code, gemini-3-pro-preview, claude-opus-4.6-fast]
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v5
+
+       - name: Set up Node.js environment
+         uses: actions/setup-node@v6
+         with:
+           node-version: '20'
+
+       - name: Install Copilot CLI
+         run: npm install -g @github/copilot
+
+       - name: Run Copilot CLI
+         env:
+           COPILOT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         run: |
+           copilot --model ${{ matrix.model }} -p "Write a poem about shetland sheepdogs" --yolo
