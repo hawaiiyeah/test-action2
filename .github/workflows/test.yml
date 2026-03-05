@@ -19,7 +19,7 @@ jobs:
         
       - name: Get available model information
         run: |
-          curl -H "Authorization: $GITHUB_TOKEN" -H "Copilot-Integration-Id: copilot-developer-cli" https://api.githubcopilot.com/models | jq
+          curl -H "Authorization: $GITHUB_TOKEN" -H "Copilot-Integration-Id: copilot-developer-cli" https://api.githubcopilot.com/models
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   test_models:
