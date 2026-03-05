@@ -1,1 +1,24 @@
 
+name: Test  claude-opus-4.6-fas
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run_with_curl:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      copilot-requests: write
+
+    steps:
+      - name: Curl copilot 4.6-fast
+        run: |
+            curl -i -X POST https://api.githubcopilot.com/chat/completions \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -H "Copilot-Integration-Id: copilot-developer-cli" \
+            -d '{"messages":[{"role":"user","content":"hello"}],"model":"claude-opus-4.6-fast"}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
